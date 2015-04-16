@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:id="@+id/index"
+
+        >
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:layout_width="match_parent"
+                 android:orientation="vertical"
+                 android:weightSum="10"
+                 android:gravity="center"
+                 android:layout_height="match_parent"
+                 android:layout_gravity="center_vertical">
+        <TableLayout
+                android:layout_width="match_parent"
+                android:gravity="center|top"
+                android:layout_weight="5"
+                android:layout_height="match_parent" android:paddingTop="100dp">
+            <TableRow
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="友评"
+                        android:id="@+id/indexMainTip" android:layout_gravity="center_horizontal"
+                        android:textSize="50dp"/>
+            </TableRow>
+
+            <TableRow
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center" android:paddingTop="10dp">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="知人面更知人心"
+                        android:id="@+id/indexSecTip" android:layout_gravity="center_horizontal"
+                        android:textSize="20dp"/>
+            </TableRow>
+
+            <TableRow
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center" android:paddingTop="20dp">
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/indexInput" android:layout_gravity="center_horizontal"
+                        android:background="@drawable/rectborder"
+                        android:hint="输入自己或者好友的手机号，可以查看身边人给出的评价"
+                        android:paddingLeft="10dp" android:paddingTop="10dp" android:paddingRight="10dp"
+                        android:paddingBottom="10dp" android:textColor="#ffff1a0c"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:paddingTop="10dp" android:gravity="center">
+                <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="搜索评价"
+                        android:id="@+id/indexBtn" android:textSize="50px" android:padding="20dp"
+                        android:clickable="true"
+                        />
+            </TableRow>
+
+
+        </TableLayout>
+
+        <WebView android:layout_width="match_parent"
+                 android:id="@+id/wvComment"
+                 android:layout_height="400dp"
+                 android:layout_weight="5"
+                 android:visibility="invisible"
+                 android:gravity="center|top"
+                 android:layout_marginTop="100dp">
+
+        </WebView>
+    </FrameLayout>
+</LinearLayout>
+

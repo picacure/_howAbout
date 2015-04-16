@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">howpeople</string>
+    <string name="Exit">Exit</string>
+    <string name="Clear">清除</string>
+    <string name="Register">注册</string>
+    <string name="Login">登陆</string>
+    <string name="Back">取消</string>
+</resources>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_height="fill_parent"
+              android:layout_width="fill_parent"
+              android:layout_gravity="fill_horizontal"
+              android:orientation="vertical" android:paddingTop="100dp">
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <EditText
+                android:layout_height="wrap_content"
+                android:id="@+id/nUsername"
+                android:selectAllOnFocus="true"
+                android:lines="1"
+                android:hint="手机号码"
+                android:inputType="text"
+                android:layout_width="fill_parent"
+                android:layout_gravity="fill_horizontal"
+                android:gravity="fill_horizontal" android:textSize="30dp">
+        </EditText>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_gravity="center_horizontal">
+        <EditText
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:selectAllOnFocus="true"
+                android:lines="1"
+                android:id="@+id/nPassword"
+                android:hint="输入验证码"
+                android:inputType="textPassword"
+                android:layout_gravity="fill_horizontal"
+                android:layout_width="248dp" android:textSize="30dp">
+        </EditText>
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="获取验证码"
+                android:id="@+id/nVeriCode"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <EditText
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:selectAllOnFocus="true"
+                android:lines="1"
+                android:id="@+id/nConfiPass"
+                android:hint="设置密码"
+                android:inputType="textPassword"
+                android:layout_gravity="fill_horizontal"
+                android:layout_width="match_parent" android:textSize="30dp">
+        </EditText>
+    </LinearLayout>
+    <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent">
+        <Button
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/Register"
+                android:id="@+id/nRegister"
+                android:clickable="true"
+                android:layout_width="194dp"
+                android:textSize="30dp">
+        </Button>
+        <Button
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/Back"
+                android:id="@+id/nBack"
+                android:clickable="true" android:layout_width="wrap_content" android:layout_weight="1"
+                android:textSize="30dp"></Button>
+    </LinearLayout>
+    <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent">
+    </LinearLayout>
+</LinearLayout>
