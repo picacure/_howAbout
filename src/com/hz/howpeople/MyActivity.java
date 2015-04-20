@@ -1,6 +1,7 @@
 package com.hz.howpeople;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -54,10 +55,10 @@ public class MyActivity extends Activity {
         mSearch = (Button) findViewById(R.id.indexBtn);
         mSearch.setOnClickListener(onClickListener);
 
-        mWvf = new MyWebViewFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+
+        mWvf = (MyWebViewFragment)fragmentManager.findFragmentById(R.id.MWFragment);
         mWvf.setContext(this);
-        mWvf.onCreate(savedInstanceState);
-        mWvf.prepare("");
     }
 
 
@@ -78,6 +79,9 @@ public class MyActivity extends Activity {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
+                    default:{
+                        mWvf.prepare("");
+                    }
 //                    case R.id.indexBtn: {
 //
 //                        //隐藏输入框.

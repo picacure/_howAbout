@@ -75,8 +75,8 @@
 
         <fragment
                 android:name="com.hz.howpeople.MyWebViewFragment"
-                android:id="@+id/fragmentTitles"
-                android:layout_height="0px"
+                android:id="@+id/MWFragment"
+                android:layout_height="200px"
                 android:layout_weight="5"
                 android:layout_width="fill_parent"
                 />
