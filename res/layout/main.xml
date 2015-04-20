@@ -73,13 +73,21 @@
 
         </TableLayout>
 
-        <fragment
-                android:name="com.hz.howpeople.MyWebViewFragment"
-                android:id="@+id/MWFragment"
-                android:layout_height="200px"
-                android:layout_weight="5"
-                android:layout_width="fill_parent"
-                />
+        <!--<fragment-->
+                <!--android:name="com.hz.howpeople.MyWebViewFragment"-->
+                <!--android:id="@+id/MWFragment"-->
+                <!--android:layout_height="500px"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--/>-->
+
+        <WebView
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:id="@+id/sourceWv"
+                android:layout_weight = "5"
+                android:visibility="invisible"
+                android:gravity="center|top">
+        </WebView>
     </FrameLayout>
 </LinearLayout>
 

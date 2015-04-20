@@ -18,13 +18,10 @@ public class MyWebViewFragment extends Fragment {
     private WebView mBackup;
     private Context mCtx;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup
             container, Bundle savedInstanceState) {
-        View viewHierarchy =
-                inflater.inflate(R.layout.webview, container,
-                        false);
+        View viewHierarchy = inflater.inflate(R.layout.webview, container,false);
 
         mSource = (WebView) viewHierarchy.findViewById(R.id.sourceWv);
         mSource.getSettings().setJavaScriptEnabled(true);
@@ -40,12 +37,11 @@ public class MyWebViewFragment extends Fragment {
     @Override
     public  void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     public void prepare(String url){
-        if(mBackup != null){
-            mBackup.loadUrl("file:///android_asset/www/contacts.html");
+        if(mSource != null){
+            mSource.loadUrl("file:///android_asset/www/detail.html");
         }
     }
 

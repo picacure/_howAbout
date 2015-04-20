@@ -29,13 +29,13 @@ public class MyActivity extends Activity {
 
     private LinearLayout mLL;
     private Button mSearch;
-    private MyWebViewFragment mWvf;
+//    private MyWebViewFragment mWvf;
+    private WebView mwv;
     private View.OnClickListener onClickListener;
     private ArrayList<MyContact> mContact;
     private EditText mInput;
 
     private final int MY_REQUEST_ID = -1;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,10 +55,15 @@ public class MyActivity extends Activity {
         mSearch = (Button) findViewById(R.id.indexBtn);
         mSearch.setOnClickListener(onClickListener);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        mwv = (WebView)findViewById(R.id.sourceWv);
+        mwv.getSettings().setJavaScriptEnabled(true);
+        mwv.addJavascriptInterface(new Proxy(this), "Android");
 
-        mWvf = (MyWebViewFragment)fragmentManager.findFragmentById(R.id.MWFragment);
-        mWvf.setContext(this);
+//        FragmentManager fragmentManager = getFragmentManager();
+//        mWvf = (MyWebViewFragment)fragmentManager.findFragmentById(R.id.MWFragment);
+//        mWvf.setContext(this);
+
+
     }
 
 
@@ -79,51 +84,44 @@ public class MyActivity extends Activity {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
-                    default:{
-                        mWvf.prepare("");
+                    case R.id.indexBtn: {
+
+                        //隐藏输入框.
+                        InputMethodManager imm = (InputMethodManager) getSystemService(
+                                Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(mInput.getWindowToken(), 0);
+                        mwv.setVisibility(View.VISIBLE);
+
+
+                        if (mContact == null) {
+                            new ReadPhoneTask().execute();
+                        } else {
+                            String mi = mInput.getText().toString().trim().toUpperCase();
+
+                            if (mi.length() > 0) {
+
+                                if (mi.contains("W")) {
+                                    mwv.loadUrl("file:///android_asset/www/detail.html#self");
+                                } else if (mi.contains("S")) {
+                                    mwv.loadUrl("file:///android_asset/www/detail.html#all");
+                                } else if (mi.contains("M")) {
+                                    mwv.loadUrl("file:///android_asset/www/detail.html#stranger");
+                                } else if (mi.contains("Z")) {
+                                    mwv.loadUrl("file:///android_asset/www/detail.html#recent");
+                                } else if(mi.contains("L")){
+                                    loginCheck();
+                                }
+
+                            } else {
+                                mwv.loadUrl("file:///android_asset/www/contacts.html");
+                            }
+                        }
+
+                        break;
                     }
-//                    case R.id.indexBtn: {
-//
-//                        //隐藏输入框.
-//                        InputMethodManager imm = (InputMethodManager) getSystemService(
-//                                Context.INPUT_METHOD_SERVICE);
-//                        imm.hideSoftInputFromWindow(mInput.getWindowToken(), 0);
-//                        mwv.setVisibility(View.VISIBLE);
-//
-//
-//                        if (mContact == null) {
-//                            new ReadPhoneTask().execute();
-//                        } else {
-//                            String mi = mInput.getText().toString().trim().toUpperCase();
-//
-//                            if (mi.length() > 0) {
-//
-//                                if (mi.contains("W")) {
-//                                    mwv.loadUrl("file:///android_asset/www/detail.html#self");
-//                                } else if (mi.contains("S")) {
-//                                    mwv.loadUrl("file:///android_asset/www/detail.html#all");
-//                                } else if (mi.contains("M")) {
-//                                    mwv.loadUrl("file:///android_asset/www/detail.html#stranger");
-//                                } else if (mi.contains("Z")) {
-//                                    mwv.loadUrl("file:///android_asset/www/detail.html#recent");
-//                                } else if(mi.contains("L")){
-//                                    loginCheck();
-//                                }
-//
-//                            } else {
-//                                mwv.loadUrl("file:///android_asset/www/contacts.html");
-//                            }
-//                        }
-//
-//                        break;
-//                    }
-//                    case R.id.wvComment: {
-//                        mwv.setVisibility(View.INVISIBLE);
-//                        break;
-//                    }
-//                    default: {
-//                        mwv.setVisibility(View.INVISIBLE);
-//                    }
+                    default: {
+                        mwv.setVisibility(View.INVISIBLE);
+                    }
                 }
             }
         };
@@ -202,23 +200,32 @@ public class MyActivity extends Activity {
         }
 
         protected void onPostExecute(Void voids) {
-            String mi = mInput.getText().toString().trim();
+            String mi = mInput.getText().toString().trim().toUpperCase();
 
-//            if (mi.length() > 0) {
-//
-//                if (mi.contains("W")) {
-//                    mwv.loadUrl("file:///android_asset/www/detail.html#self");
-//                } else if (mi.contains("S")) {
-//                    mwv.loadUrl("file:///android_asset/www/detail.html#all");
-//                } else if (mi.contains("M")) {
-//                    mwv.loadUrl("file:///android_asset/www/detail.html#stranger");
-//                } else if (mi.contains("Z")) {
-//                    mwv.loadUrl("file:///android_asset/www/detail.html#recent");
-//                }
-//
-//            } else {
-//                mwv.loadUrl("file:///android_asset/www/contacts.html");
-//            }
+            //隐藏输入框.
+            InputMethodManager imm = (InputMethodManager) getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mInput.getWindowToken(), 0);
+            mwv.setVisibility(View.VISIBLE);
+
+            if (mi.length() > 0) {
+
+                if (mi.contains("W")) {
+                    mwv.loadUrl("file:///android_asset/www/detail.html#self");
+                } else if (mi.contains("S")) {
+                    mwv.loadUrl("file:///android_asset/www/detail.html#all");
+                } else if (mi.contains("M")) {
+                    mwv.loadUrl("file:///android_asset/www/detail.html#stranger");
+                } else if (mi.contains("Z")) {
+                    mwv.loadUrl("file:///android_asset/www/detail.html#recent");
+                }
+                else{
+                    mwv.loadUrl("file:///android_asset/www/contacts.html");
+                }
+
+            } else {
+                mwv.loadUrl("file:///android_asset/www/contacts.html");
+            }
         }
     }
 
@@ -229,6 +236,26 @@ public class MyActivity extends Activity {
         public MyContact(String n, String p) {
             name = n;
             phone = p;
+        }
+    }
+
+    public class Proxy {
+
+        Context mContext;
+
+        /**
+         * Instantiate the interface and set the context
+         */
+        Proxy(Context c) {
+            mContext = c;
+        }
+
+        /**
+         * Show a toast from the web page
+         */
+        //@JavascriptInterface
+        public String GetAllContacts() {
+            return new Gson().toJson(mContact);
         }
     }
 }
