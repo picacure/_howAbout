@@ -73,15 +73,13 @@
 
         </TableLayout>
 
-        <WebView android:layout_width="match_parent"
-                 android:id="@+id/wvComment"
-                 android:layout_height="400dp"
-                 android:layout_weight="5"
-                 android:visibility="invisible"
-                 android:gravity="center|top"
-                 android:layout_marginTop="100dp">
-
-        </WebView>
+        <fragment
+                android:name="com.hz.howpeople.MyWebViewFragment"
+                android:id="@+id/fragmentTitles"
+                android:layout_height="0px"
+                android:layout_weight="5"
+                android:layout_width="fill_parent"
+                />
     </FrameLayout>
 </LinearLayout>
 

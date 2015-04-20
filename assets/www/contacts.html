@@ -41,7 +41,7 @@
 
     <script src="angular.js"></script>
     <script src="zepto.js"></script>
-    <script src="mock/contacts.js"></script>
+    <script src="mock/lianxiren.js"></script>
 
 </head>
 <body>
@@ -70,7 +70,7 @@
 
     var phonecatApp = angular.module('phonecatApp', []);
     var contacts = JSON.parse(Android.GetAllContacts()) || CTS;
-//    var contacts = CTS;
+//    var contacts = PhoneContacts;
 
     phonecatApp.controller('PhoneListCtrl', function ($scope) {
         $scope.phones = contacts;

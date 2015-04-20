@@ -1,7 +1,7 @@
 /**
  * Created by admin on 15-4-16.
  */
-var CTS = [{"name": "章晓君", "phone": "13515758347,"}, {"name": "王悄", "phone": "13085683398,"}, {
+var PhoneContacts = [{"name": "章晓君", "phone": "13515758347,"}, {"name": "王悄", "phone": "13085683398,"}, {
     "name": "王哲",
     "phone": "18600280834,"
 }, {"name": "常林", "phone": "15811280130,"}, {"name": "丁鉴明", "phone": "15680810298,"}, {
