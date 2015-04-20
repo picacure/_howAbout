@@ -79,20 +79,7 @@
 <script>
 
     var commentsApp = angular.module('commentsApp', []);
-    var cc;
-
-    var h = window.location.hash;
-    if(h == "#self"){
-        cc = MyComments;
-
-        $(".w-content-stranger").hide();
-    }
-
-    if(h == "#stranger"){
-        cc= StrangerComments;
-
-        $(".w-content-self").hide();
-    }
+    var cc = MyComments;
 
     commentsApp.controller('selfCommentsListCtrl', function ($scope) {
         $scope.self = {

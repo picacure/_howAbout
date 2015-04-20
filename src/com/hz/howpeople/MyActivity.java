@@ -14,10 +14,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -29,11 +32,13 @@ public class MyActivity extends Activity {
 
     private LinearLayout mLL;
     private Button mSearch;
-//    private MyWebViewFragment mWvf;
+    //    private MyWebViewFragment mWvf;
     private WebView mwv;
     private View.OnClickListener onClickListener;
     private ArrayList<MyContact> mContact;
     private EditText mInput;
+
+    private ProgressBar mProgressBar;
 
     private final int MY_REQUEST_ID = -1;
 
@@ -55,28 +60,78 @@ public class MyActivity extends Activity {
         mSearch = (Button) findViewById(R.id.indexBtn);
         mSearch.setOnClickListener(onClickListener);
 
-        mwv = (WebView)findViewById(R.id.sourceWv);
+        mwv = (WebView) findViewById(R.id.sourceWv);
         mwv.getSettings().setJavaScriptEnabled(true);
+        //no cache.
+        mwv.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                view.clearCache(true);
+            }
+        });
         mwv.addJavascriptInterface(new Proxy(this), "Android");
+
+        mProgressBar = (ProgressBar) findViewById(R.id.mProbar);
 
 //        FragmentManager fragmentManager = getFragmentManager();
 //        mWvf = (MyWebViewFragment)fragmentManager.findFragmentById(R.id.MWFragment);
 //        mWvf.setContext(this);
-
-
     }
 
 
     private void loginCheck() {
-        if(Math.random() > 0.5){
+        if (Math.random() > 0.5) {
             Intent reg = new Intent(this, registerActivity.class);
             startActivity(reg);
-        }
-        else{
+        } else {
             Intent log = new Intent(this, loginActivity.class);
             startActivity(log);
         }
 
+    }
+
+    private void showWebView(){
+        //隐藏输入框.
+        InputMethodManager imm = (InputMethodManager) getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mInput.getWindowToken(), 0);
+
+
+        if (mContact == null) {
+            new ReadPhoneTask().execute();
+        } else {
+            String mi = mInput.getText().toString().trim().toUpperCase();
+
+            if (mi.length() > 0) {
+
+                if (mi.contains("W")) {
+                    Log.e("mi","W");
+                    mwv.loadUrl("file:///android_asset/www/me.html");
+                } else if (mi.contains("S")) {
+                    mwv.loadUrl("file:///android_asset/www/friend.html");
+                } else if (mi.contains("M")) {
+                    Log.e("mi","M");
+                    mwv.loadUrl("file:///android_asset/www/stranger.html");
+                } else if (mi.contains("Z")) {
+                    mwv.loadUrl("file:///android_asset/www/me.html#recent");
+                } else if (mi.contains("L")) {
+                    loginCheck();
+                }
+
+            } else {
+                mwv.loadUrl("file:///android_asset/www/contacts.html");
+            }
+
+
+            new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                            mwv.setVisibility(View.VISIBLE);
+                        }
+                    }, 500);
+        }
     }
 
     private void initClick() {
@@ -85,37 +140,7 @@ public class MyActivity extends Activity {
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.indexBtn: {
-
-                        //隐藏输入框.
-                        InputMethodManager imm = (InputMethodManager) getSystemService(
-                                Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(mInput.getWindowToken(), 0);
-                        mwv.setVisibility(View.VISIBLE);
-
-
-                        if (mContact == null) {
-                            new ReadPhoneTask().execute();
-                        } else {
-                            String mi = mInput.getText().toString().trim().toUpperCase();
-
-                            if (mi.length() > 0) {
-
-                                if (mi.contains("W")) {
-                                    mwv.loadUrl("file:///android_asset/www/detail.html#self");
-                                } else if (mi.contains("S")) {
-                                    mwv.loadUrl("file:///android_asset/www/detail.html#all");
-                                } else if (mi.contains("M")) {
-                                    mwv.loadUrl("file:///android_asset/www/detail.html#stranger");
-                                } else if (mi.contains("Z")) {
-                                    mwv.loadUrl("file:///android_asset/www/detail.html#recent");
-                                } else if(mi.contains("L")){
-                                    loginCheck();
-                                }
-
-                            } else {
-                                mwv.loadUrl("file:///android_asset/www/contacts.html");
-                            }
-                        }
+                        showWebView();
 
                         break;
                     }
@@ -133,13 +158,17 @@ public class MyActivity extends Activity {
         if (requestCode == MY_REQUEST_ID) {
             if (resultCode == RESULT_OK) {
                 String myValue = data.getStringExtra("valueName");
-                // use 'myValue' return value here
+
             }
         }
     }
 
 
-    private class ReadPhoneTask extends AsyncTask<Void, Void, Void> {
+    private class ReadPhoneTask extends AsyncTask<Void, Integer, Void> {
+        protected void onPreExecute(){
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
         @Override
         protected Void doInBackground(Void... voids) {
             if (mContact == null) mContact = new ArrayList<MyContact>();
@@ -184,6 +213,9 @@ public class MyActivity extends Activity {
 
                     num++;
 
+                    //更新进度条.
+                    publishProgress((int) ((num / 50) * 100));
+
                     if (num > 50) break;
                 }
 
@@ -199,33 +231,12 @@ public class MyActivity extends Activity {
             return null;
         }
 
+        protected void onProgressUpdate(Integer... progress) {
+            mProgressBar.setProgress(progress[0]);
+        }
+
         protected void onPostExecute(Void voids) {
-            String mi = mInput.getText().toString().trim().toUpperCase();
-
-            //隐藏输入框.
-            InputMethodManager imm = (InputMethodManager) getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mInput.getWindowToken(), 0);
-            mwv.setVisibility(View.VISIBLE);
-
-            if (mi.length() > 0) {
-
-                if (mi.contains("W")) {
-                    mwv.loadUrl("file:///android_asset/www/detail.html#self");
-                } else if (mi.contains("S")) {
-                    mwv.loadUrl("file:///android_asset/www/detail.html#all");
-                } else if (mi.contains("M")) {
-                    mwv.loadUrl("file:///android_asset/www/detail.html#stranger");
-                } else if (mi.contains("Z")) {
-                    mwv.loadUrl("file:///android_asset/www/detail.html#recent");
-                }
-                else{
-                    mwv.loadUrl("file:///android_asset/www/contacts.html");
-                }
-
-            } else {
-                mwv.loadUrl("file:///android_asset/www/contacts.html");
-            }
+            showWebView();
         }
     }
 

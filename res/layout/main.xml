@@ -80,6 +80,7 @@
                 <!--android:layout_width="fill_parent"-->
                 <!--/>-->
 
+
         <WebView
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
@@ -88,6 +89,18 @@
                 android:visibility="invisible"
                 android:gravity="center|top">
         </WebView>
+
+        <ProgressBar android:id="@+id/mProbar"
+                     style="?android:attr/progressBarStyleHorizontal"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentLeft="true"
+                     android:layout_below="@+id/progressBar1"
+                     android:layout_marginTop="0dp"
+                     android:visibility="invisible"
+                     android:progress="0"
+                     android:progressDrawable="@drawable/progressbar"/>
+
     </FrameLayout>
 </LinearLayout>
 

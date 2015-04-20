@@ -41,7 +41,7 @@ public class MyWebViewFragment extends Fragment {
 
     public void prepare(String url){
         if(mSource != null){
-            mSource.loadUrl("file:///android_asset/www/detail.html");
+            mSource.loadUrl("file:///android_asset/www/me.html");
         }
     }
 

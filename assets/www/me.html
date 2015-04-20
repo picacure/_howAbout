@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>××××</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html, charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="format-detection" content="telephone=no">
+    <meta names="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <link rel="stylesheet" href="style/detail.css" type="text/css">
+    <style>
+        body, html {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+
+        ul, li {
+            margin: 0;
+        }
+
+    </style>
+
+    <script src="angular.js"></script>
+    <script src="zepto.js"></script>
+
+    <script src="mock/wodepingjia.js"></script>
+    <script src="mock/moshengrenpingjia.js"></script>
+</head>
+<body>
+<div id="wrapper" ng-app="commentsApp">
+
+    <!-- 自己-->
+    <div class="w-content-self" ng-controller="selfCommentsListCtrl">
+        <div class="w-title">
+            <div class="w-t-curr">
+                目前友评分：{{self.grade}}
+            </div>
+            <div class="w-t-invest">
+                邀请更多评价
+            </div>
+        </div>
+        <ul ng-repeat="c in self.comments">
+            <li>
+                <div class="w-source">
+                    {{c.source}}
+                </div>
+                <div class="w-response">
+                    <div class="w-r-content">{{c.response}}</div>
+                    <div class="w-r-feedback">{{self.responseOrUpdate($index)}}</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+
+    var commentsApp = angular.module('commentsApp', []);
+    var cc = MyComments;
+
+    commentsApp.controller('selfCommentsListCtrl', function ($scope) {
+        $scope.self = {
+            comments: cc.comments,
+            grade: cc.grade,
+            responseOrUpdate: function (i) {
+                if (this.comments[i].response == "") {
+                    return "回复";
+                }
+                else {
+                    return "更新";
+                }
+            }
+        };
+    });
+
+</script>
+</body>
+</html>
