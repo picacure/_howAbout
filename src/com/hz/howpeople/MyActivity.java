@@ -11,10 +11,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -77,8 +77,10 @@ public class MyActivity extends Activity {
 //        FragmentManager fragmentManager = getFragmentManager();
 //        mWvf = (MyWebViewFragment)fragmentManager.findFragmentById(R.id.MWFragment);
 //        mWvf.setContext(this);
-    }
 
+//        Intent cs = new Intent(this, callService.class);
+//        startService(cs);
+    }
 
     private void loginCheck() {
         if (Math.random() > 0.5) {
