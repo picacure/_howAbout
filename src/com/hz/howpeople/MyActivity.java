@@ -80,6 +80,9 @@ public class MyActivity extends Activity {
 
 //        Intent cs = new Intent(this, callService.class);
 //        startService(cs);
+
+
+
     }
 
     private void loginCheck() {
