@@ -1,7 +1,6 @@
 package com.hz.howpeople;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -32,7 +30,6 @@ public class MyActivity extends Activity {
 
     private LinearLayout mLL;
     private Button mSearch;
-    //    private MyWebViewFragment mWvf;
     private WebView mwv;
     private View.OnClickListener onClickListener;
     private ArrayList<MyContact> mContact;
@@ -78,11 +75,8 @@ public class MyActivity extends Activity {
 //        mWvf = (MyWebViewFragment)fragmentManager.findFragmentById(R.id.MWFragment);
 //        mWvf.setContext(this);
 
-//        Intent cs = new Intent(this, callService.class);
+//        Intent cs = new Intent(this, phoneService.class);
 //        startService(cs);
-
-
-
     }
 
     private void loginCheck() {
@@ -120,6 +114,9 @@ public class MyActivity extends Activity {
                     mwv.loadUrl("file:///android_asset/www/stranger.html");
                 } else if (mi.contains("Z")) {
                     mwv.loadUrl("file:///android_asset/www/me.html#recent");
+                } else if (mi.contains("A")) {
+                    mwv.loadUrl("file:///android_asset/www/agreement.html");
+
                 } else if (mi.contains("L")) {
                     loginCheck();
                 }

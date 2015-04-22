@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">howpeople</string>
+    <string name="app_name">友评</string>
     <string name="Exit">Exit</string>
     <string name="Clear">清除</string>
     <string name="Register">注册</string>

@@ -1,17 +1,15 @@
 package com.hz.howpeople;
 
+
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.CountDownTimer;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
+import android.view.WindowManager;
 import android.widget.Toast;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
-import android.os.Handler;
 
 
 /**
@@ -19,63 +17,52 @@ import android.os.Handler;
  */
 public class callInterceptor extends BroadcastReceiver {
 
-    Timer mTimer = new Timer();
-
-    /**
-     * 此方法利用TimerTask在Toast显示一秒后再显示一次。
-     */
-    private void execToast(final Toast toast) {
-
-//        timer.schedule(new TimerTask() {
-//
-//            @Override
-//            public void run() {
-//                //调主线程方法，否则可能会显示不出来。
-//                initToast(toast);
-//            }
-//
-//        }, 1000);
-
-        mTimer.scheduleAtFixedRate(new TimerTask() {
-
-            @Override
-            public void run() {
-                //调主线程方法，否则可能会显示不出来。
-                initToast(toast);
-            }
-
-        }, 0, 1000);
-    }
-
-    private void initToast(Toast toast) {
-        toast.show();
-    }
-
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
+
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         String msg = "友评提示：（";
 
-        if (TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
+        if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             msg += incomingNumber + "):友评得分：8分";
-
 
             final Toast mToast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
             mToast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 300);
             mToast.show();
-            execToast(mToast);
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mTimer.cancel();
+        } else {
+            if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
+
+            } else {
+                if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("前往友评，对ta进行匿名评价?")
+                    .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            //唤起友评.
+//                            Intent i = new Intent();
+//                            i.setClassName("com.hz.howpeople", "MyActivity");
+//                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            context.startActivity(i);
+                        }
+                    }).setNegativeButton("否", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+                    AlertDialog ad = builder.create();
+                    ad.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                    ad.setCanceledOnTouchOutside(true);
+                    ad.setCancelable(false);
+                    ad.show();
                 }
-            }, 5000);
+            }
         }
-
-
-
     }
 }
