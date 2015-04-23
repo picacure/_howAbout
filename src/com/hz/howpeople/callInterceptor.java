@@ -2,20 +2,36 @@ package com.hz.howpeople;
 
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
-import android.view.WindowManager;
 import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Random;
+//import android.support.v4;
 
 
 /**
  * Created by admin on 15-4-20.
  */
 public class callInterceptor extends BroadcastReceiver {
+
+    static String lastIncoming = "";
+    NotificationManager nm;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -27,6 +43,8 @@ public class callInterceptor extends BroadcastReceiver {
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             msg += incomingNumber + "):友评得分：8分";
 
+            lastIncoming = incomingNumber;
+
             final Toast mToast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
             mToast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 300);
             mToast.show();
@@ -37,32 +55,49 @@ public class callInterceptor extends BroadcastReceiver {
             } else {
                 if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
 
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("前往友评，对ta进行匿名评价?")
-                    .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    //设置不同Id，同一个App可以显示多次.
+                    nm.cancel(1);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void run() {
 
-                            //唤起友评.
-//                            Intent i = new Intent();
-//                            i.setClassName("com.hz.howpeople", "MyActivity");
-//                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            context.startActivity(i);
+                            Calendar calendar = Calendar.getInstance();
+                            Notification notification = new Notification(R.drawable.ic, "友评：点此匿名评价益之", calendar.getTimeInMillis());
+
+                            PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+                                    new Intent(context, MyActivity.class), 0);
+
+                            notification.setLatestEventInfo(context, "友评：点此匿名评价益之", lastIncoming, contentIntent);
+                            notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
+
+                            nm.notify(1, notification);
                         }
-                    }).setNegativeButton("否", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    }, 1000);
 
-                        }
-                    });
 
-                    AlertDialog ad = builder.create();
-                    ad.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-                    ad.setCanceledOnTouchOutside(true);
-                    ad.setCancelable(false);
-                    ad.show();
+
+
+//                    final  String GROUP_KEY_EMAILS = "group_key_emails";
+//
+//                    Notification notif = new NotificationCompat.Builder(context)
+//                            .setContentTitle("友评")
+//                            .setContentText("点此匿名评价")
+//                            .setSmallIcon(R.drawable.ic)
+//                            .setGroup(GROUP_KEY_EMAILS)
+//                            .build();
+//
+//                    NotificationManagerCompat notificationManager =
+//                            NotificationManagerCompat.from(this);
+//                    notificationManager.notify(notificationId1, notif);
                 }
             }
         }
     }
 }
+
+

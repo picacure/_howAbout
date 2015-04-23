@@ -1,10 +1,10 @@
 package com.hz.howpeople;
 
-import android.app.AlertDialog;
-import android.app.Service;
+import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -17,6 +17,7 @@ import android.widget.Toast;
  */
 public class phoneService extends Service {
     private Intent mIntent;
+    private Notification mNotification;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -61,23 +62,21 @@ public class phoneService extends Service {
                 else{
                     if (state == TelephonyManager.CALL_STATE_IDLE)
                     {
-//                        final Toast aToast = Toast.makeText(getApplicationContext(), "前往友评，对ta进行匿名评价", Toast.LENGTH_LONG);
-//                        aToast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 300);
-//                        aToast.show();
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                        builder.setMessage("前往友评，对ta进行匿名评价?")
-                                .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                });
-                        AlertDialog ad = builder.create();
-                        ad.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-                        ad.setCanceledOnTouchOutside(false);
-                        ad.show();
-
+                        Context context = getApplicationContext();
+                        CharSequence title = "Hello";
+                        CharSequence message = "打鸡鸡";
+                        NotificationManager notificationManager;
+                        notificationManager = (NotificationManager)context
+                                .getSystemService(Context.NOTIFICATION_SERVICE);
+                        Notification notification;
+                        notification = new Notification(
+                                R.drawable.ic, "Notifiy.. ",
+                                System.currentTimeMillis());
+                        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                                null, 0);
+                        notification.setLatestEventInfo(context, title, message, pendingIntent);
+                        notificationManager.notify(1010, notification);
                     }
                 }
             }
