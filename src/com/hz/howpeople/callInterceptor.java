@@ -1,28 +1,18 @@
 package com.hz.howpeople;
 
 
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Handler;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Random;
-//import android.support.v4;
 
 
 /**
@@ -60,6 +50,8 @@ public class callInterceptor extends BroadcastReceiver {
                     //设置不同Id，同一个App可以显示多次.
                     nm.cancel(1);
 
+
+                    //防止不同手机拨号后清除和设置被OS优化 而不显示 notification.
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
 
@@ -78,22 +70,6 @@ public class callInterceptor extends BroadcastReceiver {
                             nm.notify(1, notification);
                         }
                     }, 1000);
-
-
-
-
-//                    final  String GROUP_KEY_EMAILS = "group_key_emails";
-//
-//                    Notification notif = new NotificationCompat.Builder(context)
-//                            .setContentTitle("友评")
-//                            .setContentText("点此匿名评价")
-//                            .setSmallIcon(R.drawable.ic)
-//                            .setGroup(GROUP_KEY_EMAILS)
-//                            .build();
-//
-//                    NotificationManagerCompat notificationManager =
-//                            NotificationManagerCompat.from(this);
-//                    notificationManager.notify(notificationId1, notif);
                 }
             }
         }
