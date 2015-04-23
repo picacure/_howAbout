@@ -71,10 +71,6 @@ public class MyActivity extends Activity {
 
         mProgressBar = (ProgressBar) findViewById(R.id.mProbar);
 
-//        FragmentManager fragmentManager = getFragmentManager();
-//        mWvf = (MyWebViewFragment)fragmentManager.findFragmentById(R.id.MWFragment);
-//        mWvf.setContext(this);
-
 //        Intent cs = new Intent(this, phoneService.class);
 //        startService(cs);
     }

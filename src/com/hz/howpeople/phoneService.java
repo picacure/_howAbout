@@ -2,22 +2,19 @@ package com.hz.howpeople;
 
 import android.app.*;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 /**
  * Created by admin on 15-4-22.
  */
 public class phoneService extends Service {
-    private Intent mIntent;
-    private Notification mNotification;
+    private callInterceptor mci;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -27,6 +24,11 @@ public class phoneService extends Service {
     @Override
     public void onCreate() {
 
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("action");
+        filter.addAction("anotherAction");
+        mci = new callInterceptor();
+        registerReceiver(mci, filter);
     }
 
     @Override
@@ -36,10 +38,9 @@ public class phoneService extends Service {
     @Override
     public void onStart(Intent intent, int startid) {
 
-        mIntent = intent;
 
-        TelephonyManager TelephonyMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        TelephonyMgr.listen(new TeleListener(), PhoneStateListener.LISTEN_CALL_STATE);
+//        TelephonyManager TelephonyMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//        TelephonyMgr.listen(new TeleListener(), PhoneStateListener.LISTEN_CALL_STATE);
     }
 
     class TeleListener extends PhoneStateListener {
