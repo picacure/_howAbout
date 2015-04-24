@@ -71,8 +71,8 @@ public class MyActivity extends Activity {
 
         mProgressBar = (ProgressBar) findViewById(R.id.mProbar);
 
-//        Intent cs = new Intent(this, phoneService.class);
-//        startService(cs);
+        Intent cs = new Intent(this, phoneService.class);
+        startService(cs);
     }
 
     private void loginCheck() {
