@@ -100,7 +100,6 @@
                      android:visibility="invisible"
                      android:progress="0"
                      android:progressDrawable="@drawable/progressbar"/>
-
     </FrameLayout>
 </LinearLayout>
 

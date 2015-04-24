@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import com.google.gson.Gson;
+import com.hz.howpeople.list.ui.SearchActivity;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,8 @@ public class MyActivity extends Activity {
 
     private ProgressBar mProgressBar;
 
+    private Context mContex;
+
     private final int MY_REQUEST_ID = -1;
 
     @Override
@@ -46,6 +49,8 @@ public class MyActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.main);
+
+        mContex = this;
 
         initClick();
 
@@ -93,6 +98,7 @@ public class MyActivity extends Activity {
         imm.hideSoftInputFromWindow(mInput.getWindowToken(), 0);
 
 
+
         if (mContact == null) {
             new ReadPhoneTask().execute();
         } else {
@@ -113,7 +119,13 @@ public class MyActivity extends Activity {
                 } else if (mi.contains("A")) {
                     mwv.loadUrl("file:///android_asset/www/agreement.html");
 
-                } else if (mi.contains("L")) {
+                }
+                else if(mi.contains("O")){
+                    Intent it = new Intent(mContex, SearchActivity.class);
+                    startActivity(it);
+
+                }
+                else if (mi.contains("L")) {
                     loginCheck();
                 }
 
