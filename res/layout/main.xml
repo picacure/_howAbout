@@ -56,15 +56,17 @@
                         android:id="@+id/indexInput" android:layout_gravity="center_horizontal"
                         android:background="@drawable/rectborder"
                         android:singleLine="true"
-                        android:hint="输入自己或者好友的手机号，可以查看身边人给出的评价"
-                        android:paddingLeft="10dp" android:paddingTop="10dp" android:paddingRight="10dp"
+                        android:textSize="15dp"
+                        android:hint="输入好友姓名关键字，或完整输入陌生人手机号码"
+                        android:paddingLeft="15dp" android:paddingTop="15dp" android:paddingRight="15dp"
                         android:nextFocusUp="@id/indexInput" android:nextFocusLeft="@id/indexInput"
-                        android:paddingBottom="10dp" android:textColor="#ffff1a0c" />
+                        android:paddingBottom="15dp" android:textColor="#ffff1a0c" />
             </TableRow>
 
             <TableRow android:weightSum="9" android:orientation="horizontal">
 
                 <Button
+                        style="?android:attr/buttonStyleSmall"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
@@ -92,7 +94,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="搜索评价"
-                        android:id="@+id/indexBtn" android:textSize="50px" android:padding="20dp"
+                        android:id="@+id/indexBtn" android:textSize="50px" android:padding="15dp"
                         android:clickable="true"
                         />
             </TableRow>

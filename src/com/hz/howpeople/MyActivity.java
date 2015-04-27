@@ -144,6 +144,8 @@ public class MyActivity extends Activity implements OnTaskCompleted{
     }
 
     private void showWebView(WEBVIEW_TYPE wt) {
+        mwv.loadUrl("about:blank");
+
         hideImm();
 
 
