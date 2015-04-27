@@ -44,18 +44,21 @@ public class phoneService extends Service {
                     String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
                     String msg = "友评提示：（";
 
-
                     final String oldNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+
+
                     //电话打出.
                     if(oldNumber != null){
                         msg += oldNumber + "):友评得分：8分";
+
+                        lastIncoming = oldNumber;
 
                         final Toast mToast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
                         mToast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 300);
                         mToast.show();
 
 
-                        //通知.
+                        //notification.
                         nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
                         //设置不同Id，同一个App可以显示多次.
