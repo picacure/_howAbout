@@ -14,13 +14,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.*;
 import com.google.gson.Gson;
 import com.hz.howpeople.list.ui.SearchActivity;
 
@@ -33,16 +31,26 @@ public class MyActivity extends Activity {
 
     private LinearLayout mLL;
     private Button mSearch;
+    private Button mMeBtn;
+    private Button mRecBtn;
+    private Button mAllBtn;
     private WebView mwv;
     private View.OnClickListener onClickListener;
     private ArrayList<MyContact> mContact;
     private EditText mInput;
+    private TableLayout mTL;
 
     private ProgressBar mProgressBar;
-
     private Context mContex;
-
     private final int MY_REQUEST_ID = -1;
+
+    private enum WEBVIEW_TYPE {
+        MINE_DETAIL,
+        STRANGER_DETAIL,
+        AGREE_DETAIL,
+        RECENT_LIST,
+        ALL_LIST
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +60,10 @@ public class MyActivity extends Activity {
 
         setContentView(R.layout.main);
 
+        setUpView();
+    }
+
+    private void setUpView() {
         mContex = this;
 
         initClick();
@@ -59,22 +71,42 @@ public class MyActivity extends Activity {
         mLL = (LinearLayout) findViewById(R.id.index);
         mLL.setOnClickListener(onClickListener);
 
+        mTL = (TableLayout) findViewById(R.id.mainTL);
+
         mInput = (EditText) findViewById(R.id.indexInput);
-        mInput.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-            }
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Intent it = new Intent(mContex, SearchActivity.class);
-                startActivity(it);
-            }
 
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
+        mInput.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count,
+                                                  int after) {
+                        mTL.setPadding(0,0,0,100);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable arg0) {
+                        mTL.setPadding(0,0,0,0);
+                    }
+                }
+        );
 
         mSearch = (Button) findViewById(R.id.indexBtn);
         mSearch.setOnClickListener(onClickListener);
+
+        mMeBtn = (Button) findViewById(R.id.meBtn);
+        mMeBtn.setOnClickListener(onClickListener);
+
+        mRecBtn = (Button) findViewById(R.id.recentBtn);
+        mRecBtn.setOnClickListener(onClickListener);
+
+        mAllBtn = (Button) findViewById(R.id.allBtn);
+        mAllBtn.setOnClickListener(onClickListener);
 
         mwv = (WebView) findViewById(R.id.sourceWv);
         mwv.getSettings().setJavaScriptEnabled(true);
@@ -105,57 +137,48 @@ public class MyActivity extends Activity {
 
     }
 
-    private void showWebView(){
+    private void showWebView(WEBVIEW_TYPE wt) {
+        hideImm();
+
+        if (mContact == null) {
+            new ReadPhoneTask().execute();
+        } else {
+            if(wt == WEBVIEW_TYPE.MINE_DETAIL){
+                mwv.loadUrl("file:///android_asset/www/me.html");
+            }
+
+            if(wt == WEBVIEW_TYPE.RECENT_LIST){
+                mwv.loadUrl("file:///android_asset/www/stranger.html");
+            }
+
+            if(wt == WEBVIEW_TYPE.STRANGER_DETAIL){
+                mwv.loadUrl("file:///android_asset/www/stranger.html");
+            }
+
+            if(wt == WEBVIEW_TYPE.AGREE_DETAIL){
+                mwv.loadUrl("file:///android_asset/www/agreement.html");
+            }
+
+            if(wt == WEBVIEW_TYPE.ALL_LIST){
+                mwv.loadUrl("file:///android_asset/www/contacts.html");
+            }
+
+            new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        mwv.setVisibility(View.VISIBLE);
+                    }
+                }, 500);
+        }
+    }
+
+    private void hideImm() {
         //隐藏输入框.
         InputMethodManager imm = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mInput.getWindowToken(), 0);
 
-
-
-        if (mContact == null) {
-            new ReadPhoneTask().execute();
-        } else {
-            String mi = mInput.getText().toString().trim().toUpperCase();
-
-            if (mi.length() > 0) {
-
-                if (mi.contains("W")) {
-                    Log.e("mi","W");
-                    mwv.loadUrl("file:///android_asset/www/me.html");
-                } else if (mi.contains("S")) {
-                    mwv.loadUrl("file:///android_asset/www/friend.html");
-                } else if (mi.contains("M")) {
-                    Log.e("mi","M");
-                    mwv.loadUrl("file:///android_asset/www/stranger.html");
-                } else if (mi.contains("Z")) {
-                    mwv.loadUrl("file:///android_asset/www/me.html#recent");
-                } else if (mi.contains("A")) {
-                    mwv.loadUrl("file:///android_asset/www/agreement.html");
-
-                }
-                else if(mi.contains("O")){
-                    Intent it = new Intent(mContex, SearchActivity.class);
-                    startActivity(it);
-
-                }
-                else if (mi.contains("L")) {
-                    loginCheck();
-                }
-
-            } else {
-                mwv.loadUrl("file:///android_asset/www/contacts.html");
-            }
-
-
-            new android.os.Handler().postDelayed(
-                    new Runnable() {
-                        public void run() {
-                            mProgressBar.setVisibility(View.INVISIBLE);
-                            mwv.setVisibility(View.VISIBLE);
-                        }
-                    }, 500);
-        }
     }
 
     private void initClick() {
@@ -164,7 +187,30 @@ public class MyActivity extends Activity {
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.indexBtn: {
-                        showWebView();
+
+                        hideImm();
+                        showWebView(WEBVIEW_TYPE.STRANGER_DETAIL);
+
+                        break;
+                    }
+
+                    case R.id.meBtn: {
+                        hideImm();
+                        showWebView(WEBVIEW_TYPE.MINE_DETAIL);
+
+                        break;
+                    }
+
+                    case R.id.recentBtn: {
+                        hideImm();
+                        showWebView(WEBVIEW_TYPE.MINE_DETAIL);
+
+                        break;
+                    }
+
+                    case R.id.allBtn: {
+                        hideImm();
+                        showWebView(WEBVIEW_TYPE.MINE_DETAIL);
 
                         break;
                     }
@@ -189,7 +235,7 @@ public class MyActivity extends Activity {
 
 
     private class ReadPhoneTask extends AsyncTask<Void, Integer, Void> {
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
@@ -260,7 +306,7 @@ public class MyActivity extends Activity {
         }
 
         protected void onPostExecute(Void voids) {
-            showWebView();
+            showWebView(WEBVIEW_TYPE.ALL_LIST);
         }
     }
 
