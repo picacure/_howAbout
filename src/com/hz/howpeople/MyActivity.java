@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -58,6 +60,18 @@ public class MyActivity extends Activity {
         mLL.setOnClickListener(onClickListener);
 
         mInput = (EditText) findViewById(R.id.indexInput);
+        mInput.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Intent it = new Intent(mContex, SearchActivity.class);
+                startActivity(it);
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
 
         mSearch = (Button) findViewById(R.id.indexBtn);
         mSearch.setOnClickListener(onClickListener);
