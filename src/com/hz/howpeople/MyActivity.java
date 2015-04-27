@@ -9,22 +9,18 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.*;
 import com.google.gson.Gson;
-import com.hz.howpeople.list.ui.SearchActivity;
 
 import java.util.ArrayList;
 
-public class MyActivity extends Activity {
+public class MyActivity extends Activity implements OnTaskCompleted{
     /**
      * Called when the activity is first created.
      */
@@ -36,9 +32,15 @@ public class MyActivity extends Activity {
     private Button mAllBtn;
     private WebView mwv;
     private View.OnClickListener onClickListener;
-    private ArrayList<MyContact> mContact;
     private EditText mInput;
     private TableLayout mTL;
+
+
+    private ArrayList<MyContact> mAllContact;
+    private ArrayList<MyContact> mRecContact;
+
+    private OnTaskCompleted onTaskCompleted;
+
 
     private ProgressBar mProgressBar;
     private Context mContex;
@@ -50,7 +52,19 @@ public class MyActivity extends Activity {
         AGREE_DETAIL,
         RECENT_LIST,
         ALL_LIST
-    };
+    }
+
+    @Override
+    public void OnTaskCompleted(CONTACT_TYPE contact_type,WebView mwv){
+        if(contact_type == CONTACT_TYPE.ALL && mwv != null){
+            mwv.loadUrl("file:///android_asset/www/contacts.html");
+        }
+
+        if(contact_type == CONTACT_TYPE.RECENT && mwv != null){
+            mwv.loadUrl("file:///android_asset/www/recent.html");
+        }
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +75,8 @@ public class MyActivity extends Activity {
         setContentView(R.layout.main);
 
         setUpView();
+
+        onTaskCompleted = new MyActivity();
     }
 
     private void setUpView() {
@@ -75,26 +91,16 @@ public class MyActivity extends Activity {
 
         mInput = (EditText) findViewById(R.id.indexInput);
 
-
-        mInput.addTextChangedListener(
-                new TextWatcher() {
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    }
-
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count,
-                                                  int after) {
-                        mTL.setPadding(0,0,0,100);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable arg0) {
-                        mTL.setPadding(0,0,0,0);
-                    }
+        mInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mTL.setPadding(0, 0, 0, 100);
+                } else {
+                    mTL.setPadding(0, 0, 0, 0);
                 }
-        );
+            }
+        });
 
         mSearch = (Button) findViewById(R.id.indexBtn);
         mSearch.setOnClickListener(onClickListener);
@@ -140,37 +146,44 @@ public class MyActivity extends Activity {
     private void showWebView(WEBVIEW_TYPE wt) {
         hideImm();
 
-        if (mContact == null) {
-            new ReadPhoneTask().execute();
-        } else {
-            if(wt == WEBVIEW_TYPE.MINE_DETAIL){
-                mwv.loadUrl("file:///android_asset/www/me.html");
-            }
 
-            if(wt == WEBVIEW_TYPE.RECENT_LIST){
-                mwv.loadUrl("file:///android_asset/www/stranger.html");
-            }
+        if (wt == WEBVIEW_TYPE.MINE_DETAIL) {
+            mwv.loadUrl("file:///android_asset/www/me.html");
+        }
 
-            if(wt == WEBVIEW_TYPE.STRANGER_DETAIL){
-                mwv.loadUrl("file:///android_asset/www/stranger.html");
+        if (wt == WEBVIEW_TYPE.RECENT_LIST) {
+            if(mRecContact == null){
+                new ReadPhoneTask(CONTACT_TYPE.RECENT,onTaskCompleted).execute();
             }
-
-            if(wt == WEBVIEW_TYPE.AGREE_DETAIL){
-                mwv.loadUrl("file:///android_asset/www/agreement.html");
+            else{
+                mwv.loadUrl("file:///android_asset/www/recent.html");
             }
+        }
 
-            if(wt == WEBVIEW_TYPE.ALL_LIST){
+        if (wt == WEBVIEW_TYPE.STRANGER_DETAIL) {
+            mwv.loadUrl("file:///android_asset/www/stranger.html");
+        }
+
+        if (wt == WEBVIEW_TYPE.AGREE_DETAIL) {
+            mwv.loadUrl("file:///android_asset/www/agreement.html");
+        }
+
+        if (wt == WEBVIEW_TYPE.ALL_LIST) {
+            if(mAllContact == null){
+                new ReadPhoneTask(CONTACT_TYPE.ALL,onTaskCompleted).execute();
+            }
+            else{
                 mwv.loadUrl("file:///android_asset/www/contacts.html");
             }
+        }
 
-            new android.os.Handler().postDelayed(
+        new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         mProgressBar.setVisibility(View.INVISIBLE);
                         mwv.setVisibility(View.VISIBLE);
                     }
                 }, 500);
-        }
     }
 
     private void hideImm() {
@@ -203,14 +216,14 @@ public class MyActivity extends Activity {
 
                     case R.id.recentBtn: {
                         hideImm();
-                        showWebView(WEBVIEW_TYPE.MINE_DETAIL);
+                        showWebView(WEBVIEW_TYPE.RECENT_LIST);
 
                         break;
                     }
 
                     case R.id.allBtn: {
                         hideImm();
-                        showWebView(WEBVIEW_TYPE.MINE_DETAIL);
+                        showWebView(WEBVIEW_TYPE.ALL_LIST);
 
                         break;
                     }
@@ -235,68 +248,83 @@ public class MyActivity extends Activity {
 
 
     private class ReadPhoneTask extends AsyncTask<Void, Integer, Void> {
+
+        private CONTACT_TYPE contactType;
+        private OnTaskCompleted taskFinishListener;
+
+
+        public ReadPhoneTask(CONTACT_TYPE contact_type,OnTaskCompleted onTaskCompleted) {
+            contactType = contact_type;
+            taskFinishListener = onTaskCompleted;
+        }
+
         protected void onPreExecute() {
+
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (mContact == null) mContact = new ArrayList<MyContact>();
 
-            ContentResolver resolver = getContentResolver();
-            Uri URI = ContactsContract.Contacts.CONTENT_URI;
-            String[] columns = new String[]{
-                    ContactsContract.Contacts._ID,
-                    ContactsContract.PhoneLookup.DISPLAY_NAME
-            };
+            if (contactType == CONTACT_TYPE.ALL || contactType == CONTACT_TYPE.RECENT) {
+                if (mAllContact == null) mAllContact = new ArrayList<MyContact>();
 
-
-            //查询联系人ID和联系人名称两列
-            Cursor cursor = resolver.query(
-                    URI, columns,
-                    ContactsContract.PhoneLookup.HAS_PHONE_NUMBER + "=1",
-                    null, null);
-
-            int num = 0;
+                ContentResolver resolver = getContentResolver();
+                Uri URI = ContactsContract.Contacts.CONTENT_URI;
+                String[] columns = new String[]{
+                        ContactsContract.Contacts._ID,
+                        ContactsContract.PhoneLookup.DISPLAY_NAME
+                };
 
 
-            try {
-                while (cursor.moveToNext()) {
-                    String name = cursor.getString(1);
+                //查询联系人ID和联系人名称两列
+                Cursor cursor = resolver.query(
+                        URI, columns,
+                        ContactsContract.PhoneLookup.HAS_PHONE_NUMBER + "=1",
+                        null, null);
 
-                    String phoneNum = "";
-                    Cursor cursor2 = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI
-                            , new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + cursor.getLong(0)
-                            , null, null);
+                int num = 0;
 
-                    //一个联系人可能存在多个号码
-                    while (cursor2.moveToNext()) {
-                        phoneNum += cursor2.getString(0) + ",";
+
+                try {
+                    while (cursor.moveToNext()) {
+                        String name = cursor.getString(1);
+
+                        String phoneNum = "";
+                        Cursor cursor2 = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+                                , new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
+                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + cursor.getLong(0)
+                                , null, null);
+
+                        //一个联系人可能存在多个号码
+                        while (cursor2.moveToNext()) {
+                            phoneNum += cursor2.getString(0) + ",";
+                        }
+
+                        mAllContact.add(new MyContact(name, phoneNum));
+
+                        //http://blog.csdn.net/a740169405/article/details/11848651
+                        //avoid cursor leak
+                        cursor2.close();
+
+                        num++;
+
+                        //更新进度条.
+                        publishProgress((int) ((num / 50) * 100));
+
+                        if (num > 50) break;
                     }
 
-                    mContact.add(new MyContact(name, phoneNum));
+                    cursor.close();
 
-                    //http://blog.csdn.net/a740169405/article/details/11848651
-                    //avoid cursor leak
-                    cursor2.close();
-
-                    num++;
-
-                    //更新进度条.
-                    publishProgress((int) ((num / 50) * 100));
-
-                    if (num > 50) break;
+                } catch (Exception ex) {
+                    Log.e("err", ex.getMessage());
+                } finally {
+                    if (cursor != null)
+                        cursor.close();  // RIGHT: ensure resource is always recovered
                 }
-
-                cursor.close();
-
-            } catch (Exception ex) {
-                Log.e("err", ex.getMessage());
-            } finally {
-                if (cursor != null)
-                    cursor.close();  // RIGHT: ensure resource is always recovered
             }
+
 
             return null;
         }
@@ -306,7 +334,7 @@ public class MyActivity extends Activity {
         }
 
         protected void onPostExecute(Void voids) {
-            showWebView(WEBVIEW_TYPE.ALL_LIST);
+            taskFinishListener.OnTaskCompleted(contactType,mwv);
         }
     }
 
@@ -336,7 +364,8 @@ public class MyActivity extends Activity {
          */
         //@JavascriptInterface
         public String GetAllContacts() {
-            return new Gson().toJson(mContact);
+            return new Gson().toJson(mAllContact);
         }
     }
 }
+

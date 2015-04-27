@@ -40,12 +40,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="知人面更知人心"
+                        android:text="知人知面更知心"
                         android:id="@+id/indexSecTip" android:layout_gravity="center_horizontal"
-                        android:textSize="30dp"/>
+                        android:textSize="15dp"/>
             </TableRow>
 
             <TableRow
+                    android:focusableInTouchMode="true"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:gravity="center" android:paddingTop="20dp">
@@ -57,6 +58,7 @@
                         android:singleLine="true"
                         android:hint="输入自己或者好友的手机号，可以查看身边人给出的评价"
                         android:paddingLeft="10dp" android:paddingTop="10dp" android:paddingRight="10dp"
+                        android:nextFocusUp="@id/indexInput" android:nextFocusLeft="@id/indexInput"
                         android:paddingBottom="10dp" android:textColor="#ffff1a0c" />
             </TableRow>
 
