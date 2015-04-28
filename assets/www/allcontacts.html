@@ -43,11 +43,12 @@
     </style>
 
     <script src="angular.js"></script>
-    <script src="zepto.js"></script>
+    <script src=""></script>
     <script src="mock/lianxiren.js"></script>
 
     <script src="progress/progress.js"></script>
     <script src="alert/alertify.js"></script>
+    <script src="jquery-1.11.2.js"></script>
 
 </head>
 <body>
@@ -67,7 +68,7 @@
             <div class="content">
                 <div class="c-left">{{phone.name}}</div>
                 <div class="c-right">{{phone.phone}}</div>
-                <div class="c-btn" ng-click="comment()">点评</div>
+                <div class="c-btn" ng-click="comment($index)">点评</div>
             </div>
         </div>
     </div>
@@ -78,42 +79,110 @@
 
     var contacts;
     if(typeof window.Android == "undefined"){
-        contacts = PhoneContacts;
+        allcontacts = PhoneContacts;
     }
     else{
-        contacts = JSON.parse(Android.GetAllContacts()) || CTS;
+        allcontacts = JSON.parse(Android.GetAllContacts()) || CTS;
     }
 
-    phonecatApp.controller('PhoneListCtrl', function ($scope) {
-        $scope.phones = contacts;
 
-        $scope.comment = function(){
+    var currTel = "";
+    var currRank = "";
+    var currComment = "";
+
+    phonecatApp.controller('PhoneListCtrl', function ($scope) {
+        $scope.phones = allcontacts;
+
+        $scope.comment = function(index){
+            currTel = $scope.phones[index].phone;
             $(".c-comments").removeClass("hide");
         }
     });
 
-    var pj = progressJs();
-
     //确定.
     $(".c-confirm").on('click',function(){
         var $comments = $(".c-comments");
+        var $textarea = $(".c-comments textarea");
+        var pj = progressJs();
 
-        $(".c-comments textarea").val("");
-
-        pj.onbeforeend(function(){
-            alertify.success("评论成功",2000);
-        });
+        currComment = $textarea.val();
 
         pj.start().autoIncrease(30, 500);
 
-        setTimeout(function () {
-            pj.end();
-            $comments.addClass("hide");
-        },2000)
+        postComment(function(result){
+            $textarea.val("");
+
+            if(result){
+                pj.end();
+                $comments.addClass("hide");
+                alertify.success("评论成功",2000);
+            }
+            else{
+                pj.end();
+                $comments.addClass("hide");
+                alertify.error("评论失败",2000);
+            }
+        });
     })
 
+    function postComment(callback){
+
+        var item = {
+            phone: 13389892,
+            who: currTel.toString(),
+            rank: currRank,
+            comment: currComment
+        };
+
+
+        $.ajax({
+            method: 'GET',
+            url: 'http://192.168.0.103:3000/all',
+            data: {},
+            dataType: 'jsonp',
+            context: document.body,
+            crossDomain: true,
+            jsonp: "callback",
+            success: function(data,textStatus,jqXHR){
+                alertify.success(data);
+            },
+            error: function(jqXHR, textStatus,errorThrown){
+                alertify.error(textStatus);
+            }
+        });
+
+
+
+//        $.ajax({
+//            url: 'http://192.168.0.103:3000/add',
+//            context: document.body,
+//            type: 'GET',
+//            data: item,
+//            cache : false,
+//            dataType: "jsonp",
+//            contentType: "application/json",
+//            success: function(data) {
+//                console.log('success');
+//                callback(true);
+//            },
+//            error: function(xhr,type){
+//                alertify.error(xhr.status || "s");
+//                callback(false);
+//            }
+//        });
+
+
+//        $.post('http://localhost:3000/add', { sample: 'payload' }, function(response){
+//            // process response
+//        })
+
+    }
+
     $(".c-range input").on("change",function(){
-        $(".c-grade").text(Math.floor($(this).val()/10));
+        var val = Math.floor($(this).val()/10);
+        $(".c-grade").text(val);
+
+        currRank = val;
     });
 </script>
 </body>

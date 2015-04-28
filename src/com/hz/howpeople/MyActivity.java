@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.*;
@@ -57,7 +59,7 @@ public class MyActivity extends Activity implements OnTaskCompleted{
     @Override
     public void OnTaskCompleted(CONTACT_TYPE contact_type,WebView mwv){
         if(contact_type == CONTACT_TYPE.ALL && mwv != null){
-            mwv.loadUrl("file:///android_asset/www/contacts.html");
+            mwv.loadUrl("file:///android_asset/www/allcontacts.html");
         }
 
         if(contact_type == CONTACT_TYPE.RECENT && mwv != null){
@@ -114,14 +116,29 @@ public class MyActivity extends Activity implements OnTaskCompleted{
         mAllBtn = (Button) findViewById(R.id.allBtn);
         mAllBtn.setOnClickListener(onClickListener);
 
+
+//        mwv= (MyWebView)findViewById(R.id.sourceWv);
+//        mwv.enablecrossdomain41();
         mwv = (WebView) findViewById(R.id.sourceWv);
-        mwv.getSettings().setJavaScriptEnabled(true);
+
+        WebSettings webSettings = mwv.getSettings();
+        webSettings.setAppCacheEnabled(false);
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setAllowFileAccessFromFileURLs(true); //Maybe you don't need this rule
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
+
+
         //no cache.
         mwv.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 view.clearCache(true);
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                return null;
             }
         });
         mwv.addJavascriptInterface(new Proxy(this), "Android");
@@ -175,7 +192,7 @@ public class MyActivity extends Activity implements OnTaskCompleted{
                 new ReadPhoneTask(CONTACT_TYPE.ALL,onTaskCompleted).execute();
             }
             else{
-                mwv.loadUrl("file:///android_asset/www/contacts.html");
+                mwv.loadUrl("file:///android_asset/www/allcontacts.html");
             }
         }
 
