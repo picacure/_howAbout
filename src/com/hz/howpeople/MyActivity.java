@@ -1,6 +1,7 @@
 package com.hz.howpeople;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +20,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.*;
 import com.google.gson.Gson;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MyActivity extends Activity implements OnTaskCompleted{
@@ -384,6 +393,20 @@ public class MyActivity extends Activity implements OnTaskCompleted{
         //@JavascriptInterface
         public String GetAllContacts() {
             return new Gson().toJson(mAllContact);
+        }
+
+        public String GetAllComments() throws IOException {
+
+            String response = "";
+            try{
+                response = HttpRequest.get("http://192.168.0.103:3000/all").accept("application/json").body();
+            }
+            catch (Exception ex){
+                Log.e("Error",ex.getMessage());
+            }
+
+
+            return response;
         }
     }
 }

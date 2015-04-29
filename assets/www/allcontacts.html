@@ -48,7 +48,7 @@
 
     <script src="progress/progress.js"></script>
     <script src="alert/alertify.js"></script>
-    <script src="jquery-1.11.2.js"></script>
+    <script src="zepto.js"></script>
 
 </head>
 <body>
@@ -135,46 +135,41 @@
         };
 
 
-        $.ajax({
-            method: 'GET',
-            url: 'http://192.168.0.103:3000/all',
-            data: {},
-            dataType: 'jsonp',
-            context: document.body,
-            crossDomain: true,
-            jsonp: "callback",
-            success: function(data,textStatus,jqXHR){
-                alertify.success(data);
-            },
-            error: function(jqXHR, textStatus,errorThrown){
-                alertify.error(textStatus);
-            }
-        });
-
-
-
 //        $.ajax({
-//            url: 'http://192.168.0.103:3000/add',
+//            method: 'GET',
+//            url: 'http://192.168.0.103:3000/all',
+//            data: {},
+//            dataType: 'jsonp',
 //            context: document.body,
-//            type: 'GET',
-//            data: item,
-//            cache : false,
-//            dataType: "jsonp",
-//            contentType: "application/json",
-//            success: function(data) {
-//                console.log('success');
-//                callback(true);
+//            crossDomain: true,
+//            jsonp: "callback",
+//            success: function(data,textStatus,jqXHR){
+//                alertify.success(data);
 //            },
-//            error: function(xhr,type){
-//                alertify.error(xhr.status || "s");
-//                callback(false);
+//            error: function(jqXHR, textStatus,errorThrown){
+//                alertify.error(textStatus);
 //            }
 //        });
 
 
-//        $.post('http://localhost:3000/add', { sample: 'payload' }, function(response){
-//            // process response
-//        })
+
+        $.ajax({
+            url: 'http://192.168.0.103:3000/add',
+            context: document.body,
+            type: 'GET',
+            data: item,
+            cache : false,
+            dataType: "jsonp",
+            contentType: "application/json",
+            success: function(data) {
+                console.log('success');
+                callback(true);
+            },
+            error: function(xhr,type){
+                alertify.error(xhr.status || "s");
+                callback(false);
+            }
+        });
 
     }
 
