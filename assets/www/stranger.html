@@ -55,7 +55,7 @@
         <ul ng-repeat="c in stranger.comments">
             <li>
                 <div class="w-source">
-                    <div>{{c.comment}}</div>
+                    <div>评价:{{c.comment}}</div>
                     <div>评分:{{c.rank}}</div>
                     <div>时间:{{c.tick}}</div>
                 </div>
@@ -67,9 +67,9 @@
 
     var commentsApp = angular.module('commentsApp', []);
 
-    var cc = "15811280130";
+    var cc = "15680810298";
     if(typeof window.Android == "undefined"){
-        cc = "15811280130";
+        cc = "15680810298";
     }
     else{
         cc = Android.GetStrangerNum() || "";
@@ -94,14 +94,26 @@
             success: function(data){
                 var d = data;
 
-                if(d == null){
+                if(d == null || data.length == 0){
                     alertify.error("查无此人");
                 }
                 else{
+
+                    var sArr = [];
+                    var sAvgRank = 0;
+                    for(var i = 0,len = d.length; i < len; i++){
+                        sArr.push(d[i]);
+
+                        sAvgRank += +d[i].rank;
+                    }
+
+                    sAvgRank = Math.abs(sAvgRank/len);
+
                     $scope.$apply(function(){
+
                         $scope.stranger = {
-                            comments: d.comments,
-                            grade: d.comments[0].rank
+                            comments: sArr,
+                            grade: sAvgRank
                         };
                     })
                 }
