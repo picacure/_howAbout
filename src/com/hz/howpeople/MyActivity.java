@@ -1,7 +1,6 @@
 package com.hz.howpeople;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,14 +19,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.*;
 import com.google.gson.Gson;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -125,9 +116,6 @@ public class MyActivity extends Activity implements OnTaskCompleted{
         mAllBtn = (Button) findViewById(R.id.allBtn);
         mAllBtn.setOnClickListener(onClickListener);
 
-
-//        mwv= (MyWebView)findViewById(R.id.sourceWv);
-//        mwv.enablecrossdomain41();
         mwv = (WebView) findViewById(R.id.sourceWv);
 
         WebSettings webSettings = mwv.getSettings();
@@ -405,8 +393,11 @@ public class MyActivity extends Activity implements OnTaskCompleted{
                 Log.e("Error",ex.getMessage());
             }
 
-
             return response;
+        }
+
+        public String GetStrangerNum(){
+            return mInput.getText().toString().trim();
         }
     }
 }

@@ -11,6 +11,11 @@
     <meta name="keywords" content=""/>
     <meta name="description" content=""/>
     <link rel="stylesheet" href="style/detail.css" type="text/css">
+
+
+    <link rel="stylesheet" href="progress/progressjs.css" type="text/css">
+    <link rel="stylesheet" href="alert/alertify.core.css" type="text/css">
+    <link rel="stylesheet" href="alert/alertify.default.css" type="text/css">
     <style>
         body, html {
             padding: 0;
@@ -33,6 +38,10 @@
 
     <script src="mock/wodepingjia.js"></script>
     <script src="mock/moshengrenpingjia.js"></script>
+
+
+    <script src="progress/progress.js"></script>
+    <script src="alert/alertify.js"></script>
 </head>
 <body>
 <div id="wrapper" ng-app="commentsApp">
@@ -46,7 +55,9 @@
         <ul ng-repeat="c in stranger.comments">
             <li>
                 <div class="w-source">
-                    {{c.source}}
+                    <div>{{c.comment}}</div>
+                    <div>评分:{{c.rank}}</div>
+                    <div>时间:{{c.tick}}</div>
                 </div>
             </li>
         </ul>
@@ -55,14 +66,53 @@
 <script>
 
     var commentsApp = angular.module('commentsApp', []);
-    var cc = StrangerComments;
+
+    var cc = "15811280130";
+    if(typeof window.Android == "undefined"){
+        cc = "15811280130";
+    }
+    else{
+        cc = Android.GetStrangerNum() || "";
+    }
 
     commentsApp.controller('strangerCommentsListCtrl', function ($scope) {
+
         $scope.stranger = {
-            comments: cc.comments,
-            grade: cc.grade
+            comments: [],
+            grade: 0
         };
+
+        $.ajax({
+            method: 'GET',
+            url: 'http://10lines.cn:3000/one',
+//            url: 'http://localhost:3000/one',
+            data: {id : cc},
+            dataType: 'jsonp',
+            context: document.body,
+            crossDomain: true,
+            jsonp: "callback",
+            success: function(data){
+                var d = data;
+
+                if(d == null){
+                    alertify.error("查无此人");
+                }
+                else{
+                    $scope.$apply(function(){
+                        $scope.stranger = {
+                            comments: d.comments,
+                            grade: d.comments[0].rank
+                        };
+                    })
+                }
+            },
+            error: function(err){
+                alertify.error("加载失败");
+            }
+        });
     });
+
+
 
 </script>
 </body>
